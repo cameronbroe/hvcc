@@ -34,6 +34,7 @@ from hvcc.generators.c2owl import c2owl
 from hvcc.generators.c2pdext import c2pdext
 from hvcc.generators.c2wwise import c2wwise
 from hvcc.generators.c2unity import c2unity
+from hvcc.generators.c2juce import c2juce
 
 
 class Colours:
@@ -291,6 +292,11 @@ def compile_dataflow(
         if verbose:
             print("--> Generating Wwise plugin")
         results["c2wwise"] = c2wwise.c2wwise.compile(**gen_args)
+    
+    if "juce" in generators:
+        if verbose:
+            print("--> Generating JUCE plugin")
+        results["juce"] = c2juce.c2juce.compile()
 
     return results
 
