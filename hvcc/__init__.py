@@ -296,7 +296,7 @@ def compile_dataflow(
     if "juce" in generators:
         if verbose:
             print("--> Generating JUCE plugin")
-        results["juce"] = c2juce.c2juce.compile()
+        results["juce"] = c2juce.c2juce.compile(**gen_args)
 
     return results
 
