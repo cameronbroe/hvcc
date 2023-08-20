@@ -81,10 +81,12 @@ juce_add_plugin({{name}}
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
+file(GLOB myCSources source/*.c)
+file(GLOB myCPPSources source/*.cpp)
 target_sources({{name}}
     PRIVATE
-        # PluginEditor.cpp
-        source/HeavyJuceProcessor_{{name}}.cpp)
+        ${myCSources}
+        ${myCPPSources})
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

@@ -3,6 +3,10 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+#include "HeavyJuceParameter.h"
+#include "Heavy_{{name}}.h"
+#include "Heavy_{{name}}.hpp"
+
 //==============================================================================
 class {{class_name}}  : public juce::AudioProcessor
 {
@@ -44,6 +48,12 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+{%- for k, v in receivers %}
+    HeavyJuceParameterFloat* {{v.display}};
+{%- endfor %}
+
+    HeavyContextInterface *_context;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR ({{class_name}})
 };

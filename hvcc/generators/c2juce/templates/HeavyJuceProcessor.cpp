@@ -12,6 +12,17 @@
                      #endif
                        )
 {
+  _context = hv_{{name}}_new_with_options(getSampleRate(), {{pool_sizes_kb.internal}}, {{pool_sizes_kb.inputQueue}}, {{pool_sizes_kb.outputQueue}});
+  _context->setUserData(this);
+
+{%- for k, v in receivers %}
+    addParameter({{v.display}} = new HeavyJuceParameterFloat("{{v.display}}_{{v.ids[0]}}",
+                                                             "{{v.display}}",
+                                                             {{v.attributes.min}}f,
+                                                             {{v.attributes.max}}f,
+                                                             {{v.attributes.default}}f,
+                                                             _context));
+{% endfor -%}
 }
 
 {{class_name}}::~{{class_name}}()
@@ -21,7 +32,7 @@
 //==============================================================================
 const juce::String {{class_name}}::getName() const
 {
-    return JucePlugin_Name;
+    return "{{name}}";
 }
 
 bool {{class_name}}::acceptsMidi() const

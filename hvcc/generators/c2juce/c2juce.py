@@ -43,7 +43,7 @@ class c2juce:
         tick = time.time()
 
         out_dir = os.path.join(out_dir, "plugin")
-        # receiver_list = externs["parameters"]["in"]
+        receiver_list = externs["parameters"]["in"]
 
         if patch_meta:
             patch_name = patch_meta.get("name", patch_name)
@@ -72,12 +72,14 @@ class c2juce:
                 os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
             )
 
+            # Processor
             juce_h_path = os.path.join(source_dir, f"HeavyJuceProcessor_{patch_name}.h")
             with open(juce_h_path, "w") as f:
                 f.write(env.get_template("HeavyJuceProcessor.h").render(
                     name=patch_name,
                     meta=juce_meta,
                     class_name=f"HeavyJuceProcessor_{patch_name}",
+                    receivers=receiver_list,
                     copyright=copyright_c
                 ))
             juce_cpp_path = os.path.join(source_dir, f"HeavyJuceProcessor_{patch_name}.cpp")
@@ -86,8 +88,32 @@ class c2juce:
                     name=patch_name,
                     meta=juce_meta,
                     class_name=f"HeavyJuceProcessor_{patch_name}",
+                    receivers=receiver_list,
+                    pool_sizes_kb=externs["memoryPoolSizesKb"],
                     copyright=copyright_c
                 ))
+
+            # Parameter wrapper
+            juce_h_path = os.path.join(source_dir, f"HeavyJuceParameter.h")
+            with open(juce_h_path, "w") as f:
+                f.write(env.get_template("HeavyJuceParameter.h").render(
+                    name=patch_name,
+                    meta=juce_meta,
+                    class_name=f"HeavyJuceProcessor_{patch_name}",
+                    receivers=receiver_list,
+                    copyright=copyright_c
+                ))
+            juce_cpp_path = os.path.join(source_dir, f"HeavyJuceParameter.cpp")
+            with open(juce_cpp_path, "w") as f:
+                f.write(env.get_template("HeavyJuceParameter.cpp").render(
+                    name=patch_name,
+                    meta=juce_meta,
+                    class_name=f"HeavyJuceProcessor_{patch_name}",
+                    receivers=receiver_list,
+                    copyright=copyright_c
+                ))
+
+            # CMakeLists.txt
             juce_cmake_path = os.path.join(source_dir, "../CMakeLists.txt")
             with open(juce_cmake_path, "w") as f:
                 f.write(env.get_template("CMakeLists.txt").render(
