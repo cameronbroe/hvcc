@@ -137,6 +137,7 @@ void {{class_name}}::processBlock (juce::AudioBuffer<float>& buffer,
 {
     juce::ignoreUnused (midiMessages);
 
+    /*
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -162,6 +163,11 @@ void {{class_name}}::processBlock (juce::AudioBuffer<float>& buffer,
         juce::ignoreUnused (channelData);
         // ..do something to the data...
     }
+    */
+    _context->process(
+        (float**)buffer.getArrayOfReadPointers(), 
+        (float**)buffer.getArrayOfWritePointers(),
+        buffer.getNumSamples());
 }
 
 //==============================================================================
