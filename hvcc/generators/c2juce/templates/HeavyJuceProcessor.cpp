@@ -12,8 +12,8 @@
                      #endif
                        )
 {
-  _context = hv_{{name}}_new_with_options(getSampleRate(), {{pool_sizes_kb.internal}}, {{pool_sizes_kb.inputQueue}}, {{pool_sizes_kb.outputQueue}});
-  _context->setUserData(this);
+    _context = hv_{{name}}_new_with_options(44100.0, {{pool_sizes_kb.internal}}, {{pool_sizes_kb.inputQueue}}, {{pool_sizes_kb.outputQueue}});
+    _context->setUserData(this);
 
 {%- for k, v in receivers %}
     addParameter({{v.display}} = new HeavyJuceParameterFloat("{{v.display}}_{{v.ids[0]}}",
@@ -22,6 +22,7 @@
                                                              {{v.attributes.max}}f,
                                                              {{v.attributes.default}}f,
                                                              _context));
+    {{v.display}}->valueChanged({{v.attributes.default}}f);
 {% endfor -%}
 }
 
@@ -137,6 +138,10 @@ void {{class_name}}::processBlock (juce::AudioBuffer<float>& buffer,
 {
     juce::ignoreUnused (midiMessages);
 
+    if(lastSampleRate != getSampleRate()) {
+        handleChangedSampleRate(getSampleRate());
+    }
+
     /*
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -195,6 +200,23 @@ void {{class_name}}::setStateInformation (const void* data, int sizeInBytes)
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     juce::ignoreUnused (data, sizeInBytes);
+}
+
+void {{class_name}}::handleChangedSampleRate (double newSampleRate)
+{
+
+    hv_{{name}}_free(_context);
+
+    _context = hv_{{name}}_new_with_options(getSampleRate(), {{pool_sizes_kb.internal}}, {{pool_sizes_kb.inputQueue}}, {{pool_sizes_kb.outputQueue}});
+    _context->setUserData(this);
+
+    {% if receivers|length > 0 -%}
+    {% for k, v in receivers -%}
+    {{v.display}}->valueChanged({{v.display}}->get());
+    {% endfor -%}
+    {%- endif %}
+
+    lastSampleRate = newSampleRate;
 }
 
 //==============================================================================

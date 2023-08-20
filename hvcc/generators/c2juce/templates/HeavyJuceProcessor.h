@@ -54,6 +54,9 @@ private:
 
     HeavyContextInterface *_context;
 
+    double lastSampleRate = 44100.0;
+    void handleChangedSampleRate (double newSampleRate);
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR ({{class_name}})
 };
